@@ -15,8 +15,8 @@ URL = "https://nussweb.org.sg/nussweb/main/main.asp"
 def main():
 
     session_requests = requests.Session()
-    #headers = requests.utils.default_headers()
-    #headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+    headers = requests.utils.default_headers()
+    headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
     #print (headers)
     # Get login csrf token
     #result = session_requests.get(LOGIN_URL,headers=headers)
@@ -33,14 +33,14 @@ def main():
 
     # Perform login
     result = session_requests.post(LOGIN_URL, data = payload)
-
+    print(result.cookie)
     result = session_requests.get(URL)
     print(result.text)
 
     # Scrape url
     result = session_requests.get(URL, headers = dict(referer = URL))
     tree = html.fromstring(result.content)
-    print(result.text)
+    #print(result.text)
     bucket_names = tree.xpath("//div[@class='repo-list--repo']/a/text()")
 
     print(bucket_names)
