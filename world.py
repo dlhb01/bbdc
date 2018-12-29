@@ -1,4 +1,5 @@
 import requests
+import time
 from lxml import html
 
 f=open("../security/credentials.txt","r")
@@ -14,36 +15,38 @@ URL = "https://nussweb.org.sg/nussweb/main/main.asp"
 
 def main():
 
-    session_requests = requests.Session()
+    s = requests.Session()
     headers = requests.utils.default_headers()
     headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
-    #print (headers)
+    print (headers)
     # Get login csrf token
-    #result = session_requests.get(LOGIN_URL,headers=headers)
+    #result = s.get(LOGIN_URL,headers=headers)
     #tree = html.fromstring(result.text)
     #print(result.text)
     #authenticity_token = list(set(tree.xpath("//input[@name='csrfmiddlewaretoken']/@value")))[0]
 
     # Create payload
-    payload = {
-        "txtMemberID": username, 
-        "txtPassword": password, 
-     #   "csrfmiddlewaretoken": authenticity_token
-    }
+    #payload = {
+    #    "txtMemberID": username, 
+    #    "txtPassword": password, 
+    #   "csrfmiddlewaretoken": authenticity_token
+    #}
 
     # Perform login
-    result = session_requests.post(LOGIN_URL, data = payload)
-    print(result.cookie)
-    result = session_requests.get(URL)
+    result=s.post(LOGIN_URL, data = dict(txtMemberID=username,txtPassword=password))
+    print(result.cookies.get_dict())
+    print(result.text)
+    time.sleep(5)
+    result = s.get(URL)
     print(result.text)
 
     # Scrape url
-    result = session_requests.get(URL, headers = dict(referer = URL))
-    tree = html.fromstring(result.content)
+    #result = s.get(URL, headers = dict(referer = URL))
+    #tree = html.fromstring(result.content)
     #print(result.text)
-    bucket_names = tree.xpath("//div[@class='repo-list--repo']/a/text()")
+    #bucket_names = tree.xpath("//div[@class='repo-list--repo']/a/text()")
 
-    print(bucket_names)
+    #print(bucket_names)
 
 if __name__ == '__main__':
     main()
